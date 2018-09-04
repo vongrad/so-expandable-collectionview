@@ -68,11 +68,13 @@ class ViewController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        print("THIS IS CALLED TO INVALIDATE VIEW")
         switch kind {
         case UICollectionElementKindSectionHeader:
             let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionElementKindSectionHeader, withReuseIdentifier: HeaderCell.CELL_ID, for: indexPath) as! HeaderCell
             header.backgroundColor = UIColor.blue
             header.lblTitle.text = "Section header \(indexPath.section)"
+            print("TRUE RECEIVED")
             return header
         default:
             assert(false, "Unexpected element kind")
@@ -86,7 +88,7 @@ class ViewController: UICollectionViewController, UICollectionViewDelegateFlowLa
             if expandedCell == indexPath {
                 return CGSize(width: collectionView.frame.size.width, height: width)
             } else {
-                return CGSize(width: collectionView.frame.size.width, height: 0)
+                return CGSize(width: collectionView.frame.size.width, height: CGFloat.leastNonzeroMagnitude)
             }
         } else {
             return CGSize(width: width, height: width)
@@ -153,22 +155,25 @@ class ViewController: UICollectionViewController, UICollectionViewDelegateFlowLa
         
         let context = UICollectionViewFlowLayoutInvalidationContext()
         
-        let supplementaryIndexPaths = (minSection + 1..<collectionView.numberOfSections).map { IndexPath(item: 0, section: $0)}
+        let supplementaryIndexPaths = (minSection + 1..<collectionView.numberOfSections).map { IndexPath(item: $0, section: minSection)}
         
         var cellIndexPaths = (minItem..<collectionView.numberOfItems(inSection: minSection)).map { IndexPath(item: $0, section: minSection) }
         for section in minSection + 1..<collectionView.numberOfSections {
             cellIndexPaths.append(contentsOf: (0..<collectionView.numberOfItems(inSection: section)).map { IndexPath(item: $0, section: section) })
         }
-        
         context.invalidateSupplementaryElements(ofKind: UICollectionElementKindSectionHeader, at: supplementaryIndexPaths)
         context.invalidateItems(at: cellIndexPaths)
+        
         context.invalidateFlowLayoutAttributes = true
         context.invalidateFlowLayoutDelegateMetrics = true
         
+        //collectionView.collectionViewLayout.invalidateLayout()
+
         UIView.animate(withDuration: 0.25) {
             collectionView.collectionViewLayout.invalidateLayout(with: context)
             collectionView.layoutIfNeeded()
         }
+        
     }
 }
 
