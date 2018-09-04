@@ -68,13 +68,11 @@ class ViewController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        print("THIS IS CALLED TO INVALIDATE VIEW")
         switch kind {
         case UICollectionElementKindSectionHeader:
             let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionElementKindSectionHeader, withReuseIdentifier: HeaderCell.CELL_ID, for: indexPath) as! HeaderCell
             header.backgroundColor = UIColor.blue
             header.lblTitle.text = "Section header \(indexPath.section)"
-            print("TRUE RECEIVED")
             return header
         default:
             assert(false, "Unexpected element kind")
@@ -154,7 +152,7 @@ class ViewController: UICollectionViewController, UICollectionViewDelegateFlowLa
         }
         
         let context = UICollectionViewFlowLayoutInvalidationContext()
-        
+       //changed the line below it seems to work partly as you need it hopefully might help to resolve the issue.
         let supplementaryIndexPaths = (minSection + 1..<collectionView.numberOfSections).map { IndexPath(item: $0, section: minSection)}
         
         var cellIndexPaths = (minItem..<collectionView.numberOfItems(inSection: minSection)).map { IndexPath(item: $0, section: minSection) }
