@@ -153,7 +153,7 @@ class ViewController: UICollectionViewController, UICollectionViewDelegateFlowLa
         
         let context = UICollectionViewFlowLayoutInvalidationContext()
        //changed the line below it seems to work partly as you need it hopefully might help to resolve the issue.
-        let supplementaryIndexPaths = (minSection + 1..<collectionView.numberOfSections).map { IndexPath(item: $0, section: minSection)}
+        let supplementaryIndexPaths = (minSection + 1..<collectionView.numberOfSections).map { IndexPath(item: 0, section: $0)}
         
         var cellIndexPaths = (minItem..<collectionView.numberOfItems(inSection: minSection)).map { IndexPath(item: $0, section: minSection) }
         for section in minSection + 1..<collectionView.numberOfSections {
