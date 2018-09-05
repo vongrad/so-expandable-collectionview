@@ -86,7 +86,7 @@ class ViewController: UICollectionViewController, UICollectionViewDelegateFlowLa
             if expandedCell == indexPath {
                 return CGSize(width: collectionView.frame.size.width, height: width)
             } else {
-                return CGSize(width: collectionView.frame.size.width, height: 0)
+                return CGSize(width: collectionView.frame.size.width, height: CGFloat.leastNonzeroMagnitude)
             }
         } else {
             return CGSize(width: width, height: width)
@@ -152,23 +152,26 @@ class ViewController: UICollectionViewController, UICollectionViewDelegateFlowLa
         }
         
         let context = UICollectionViewFlowLayoutInvalidationContext()
-        
-        let supplementaryIndexPaths = (minSection + 1..<collectionView.numberOfSections).map { IndexPath(item: 0, section: $0)}
+       //changed the line below it seems to work partly as you need it hopefully might help to resolve the issue.
+        let supplementaryIndexPaths = (minSection + 1..<collectionView.numberOfSections).map { IndexPath(item: $0, section: minSection)}
         
         var cellIndexPaths = (minItem..<collectionView.numberOfItems(inSection: minSection)).map { IndexPath(item: $0, section: minSection) }
         for section in minSection + 1..<collectionView.numberOfSections {
             cellIndexPaths.append(contentsOf: (0..<collectionView.numberOfItems(inSection: section)).map { IndexPath(item: $0, section: section) })
         }
-        
         context.invalidateSupplementaryElements(ofKind: UICollectionElementKindSectionHeader, at: supplementaryIndexPaths)
         context.invalidateItems(at: cellIndexPaths)
+        
         context.invalidateFlowLayoutAttributes = true
         context.invalidateFlowLayoutDelegateMetrics = true
         
+        //collectionView.collectionViewLayout.invalidateLayout()
+
         UIView.animate(withDuration: 0.25) {
             collectionView.collectionViewLayout.invalidateLayout(with: context)
             collectionView.layoutIfNeeded()
         }
+        
     }
 }
 
